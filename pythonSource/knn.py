@@ -5,7 +5,6 @@
 import cv2
 import numpy as np
 
-
 def getTextBlocks(file_name ):
     img  = cv2.imread(file_name)
     img_final = cv2.imread(file_name)
@@ -61,21 +60,13 @@ def getLetterImgsOfOneText(textBlockImg):
     return textLetterImgs
 
 def testLetterImg(knn, imgTest):
-
-    #trainData, trainLabels = getTrainSet(trainSetDir)
-
-    #imgTestGrey = cv2.cvtColor(imgTest, cv2.COLOR_BGR2GRAY)
     arrTest = []
     arrTest.append(imgTest)
     testData = np.array(arrTest)
     testData = testData.reshape(-1, 400).astype(np.float32)
     ret,result,neighbours,dist = knn.findNearest(testData,k=1)
-    #ret = doKNN(testData)
     return chr(int(ret))
 
-
-
-#'D:\\Study\\python\\opencv\\myChainSet\\20x20\\'
 def getTrainSet(imgPath):
 
     trainImgs = []
@@ -134,20 +125,20 @@ def checkPre(knn, trainSetDir, marksheetImgPath, requiredPre):
             text = text + testLetterImg(knn, letterImg);
         texts.append(text)
     #check if required prerequisites has been found in the mark sheet 
-    #foundPres = []
-    #for pre in requiredPre:
-    #   if pre in texts:
-    #        foundPres.append(pre)
-    #return foundPres
-	print texts
+    foundPres = []
+    for pre in requiredPre:
+       if pre in texts:
+            foundPres.append(pre)
+    return foundPres
 
 def test():
-    
     trainSetDir = "D:\\Study\\python\\opencv\\myChainSet\\20x20\\"
     marksheetImgPath = "D:\\Study\\python\\opencv\\solution1\\img\\marksheet4.png"
     trainData, trainLabels = getTrainSet(trainSetDir)
-    knn = cv2.ml.KNearest_create()
+    #the 2 lines below will be put in init function on server
+	knn = cv2.ml.KNearest_create()
     knn.train(trainData, cv2.ml.ROW_SAMPLE, trainLabels)
+
     requiredPre = ["202", "206", "248"]
     foundPres = checkPre(knn, trainSetDir, marksheetImgPath, requiredPre)
     print foundPres
