@@ -1,0 +1,18 @@
+{
+	"name": "Prerequisite checking within MySJSU",
+	"description": "Capture the unofficial transcript and send to the web app",
+	"version": "0.0.0.1",
+	"manifest_version": 2,
+    "browser_action": {
+      "default_icon": "screenshot.png",
+      "default_title": "Screenshot for transcript",      // optional; shown in tooltip
+      "default_popup": "popup.html"        // optional
+    },
+    "permissions": [
+        "tabs", "<all_urls>"
+    ],
+	"content_scripts": [{
+		"matches": ["*://cmshr.cms.sjsu.edu/*"],
+		"js": ["html2canvas.min.js", "capture.js"]
+	}]
+}
