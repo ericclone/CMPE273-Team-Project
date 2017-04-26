@@ -7,6 +7,8 @@ function getDiv() {
 function capture_save() {
     html2canvas(getDiv(), {
         background :'#FFFFFF',
+        dpi: 192,
+        scale: 2,
         onrendered: function(canvas) {
             var a = document.createElement('a');
             // toDataURL defaults to png, so we need to request a jpeg, then convert for file download.
@@ -20,6 +22,8 @@ function capture_save() {
 function capture_post() {
     html2canvas(getDiv(), {
         background :'#FFFFFF',
+        dpi: 192,
+        scale: 2,
         onrendered: function (canvas) {
             var imagedata = canvas.toDataURL('image/png');
             var imgdata = imagedata.replace(/^data:image\/(png|jpg);base64,/, "");
