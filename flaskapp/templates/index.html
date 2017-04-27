@@ -7,18 +7,17 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="../favicon.ico">
 
     <title>Confirmation Page for Pre-requisite check system</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='bootstrap.min.css') }}" rel="stylesheet">
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <link href="../css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='ie10-viewport-bug-workaround.css') }}" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="../css/cover.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='cover.css') }}" rel="stylesheet">
 
   </head>
 
@@ -40,7 +39,7 @@
             <h1 class="cover-heading">Congratulation you don't have any Pre-requistie</h1>
             <p class="lead">Do you want to receive a confirmation email for this result? <br> Please enter your email and click send</p>
             
-            <form class="form-signin" action="111.php" method="post">
+            <form class="form-signin" action="/send_mail" method="post">
               
               <label for="inputEmail" class="sr-only">Email address</label>
               <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
@@ -67,9 +66,9 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="../js/vendor/jquery.min.js"><\/script>')</script>
-    <script src="../js/bootstrap.min.js"></script>
+    <script>window.jQuery || document.write('<script src="{{ url_for('static', filename='jquery.min.js') }}"><\/script>')</script>
+    <script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../js/ie10-viewport-bug-workaround.js"></script>
+    <script src="{{ url_for('static', filename='ie10-viewport-bug-workaround.js') }}"></script>
   </body>
 </html>
