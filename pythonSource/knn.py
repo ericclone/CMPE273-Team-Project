@@ -4,6 +4,12 @@
 
 import cv2
 import numpy as np
+import time
+
+def showImg(label, img):
+    cv2.imshow(label, img)
+    cv2.waitKey(500)
+    cv2.destroyAllWindows
 
 def getTextBlocks(file_name ):
     img  = cv2.imread(file_name)
@@ -33,12 +39,13 @@ def getTextBlocks(file_name ):
         crop_img = new_img[y:y+h, x:x+w]
         ret,crop_img = cv2.threshold(crop_img, 127, 255, cv2.THRESH_BINARY_INV) #reverse color of foreground and background
         textRectArr.append(crop_img)
-        #cv2.imshow('image',crop_img)  #todo
-        #cv2.waitKey(0)
-        #cv2.destroyAllWindows()
+        # cv2.imshow('One word',crop_img)  #todo
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
     return textRectArr
 
 def getLetterImgsOfOneText(textBlockImg):
+    showImg("Block", textBlockImg)
     im2, contours, hierarchy = cv2.findContours(textBlockImg, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     cnts = sorted([(c, cv2.boundingRect(c)[0]) for c in contours], key=lambda x:x[1])
     arr = []
@@ -61,15 +68,13 @@ def getLetterImgsOfOneText(textBlockImg):
 
     for index, (x, y, w, h) in enumerate(arr):
         letterSrcImg = textBlockImg[y: y + h, x: x + w]
+        showImg("Letter Before Resize", letterSrcImg)
         
         #if(h < 15 or w < 10 or w > 20):
         #    continue	
         resized_image = cv2.resize(letterSrcImg, (20, 20))
         textLetterImgs.append(resized_image)
-        #cv2.imshow('image',resized_image) #todo
-        #cv2.waitKey(0)
-        #cv2.destroyAllWindows()
-    
+        showImg("One Letter after resize", resized_image)
     return textLetterImgs
 
 def testLetterImg(knn, imgTest):
@@ -94,6 +99,7 @@ def getTrainSet(imgPath):
         trainDigitImgPath = imgPath + str(i) + ".png"
         trainDigitImg = cv2.imread(trainDigitImgPath)
         trainDigitImg = cv2.cvtColor(trainDigitImg, cv2.COLOR_BGR2GRAY)
+        # trainDigitImg = trainDigitImg.reshape(-1, 400).astype(np.float32)
         trainImgs.append(trainDigitImg)
     #add ":"
     #trainLetterImgPath = imgPath + "colon.png"
@@ -103,13 +109,21 @@ def getTrainSet(imgPath):
     #add alphabet[a-zA-Z]
     alphabet = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
     for letter in alphabet:
+        if letter >= "A" and letter <= "Z":
+            letter = letter + "_"
         trainLetterImgPath = imgPath + letter + ".png"
+        print "reading ", trainLetterImgPath
         trainLetterImg = cv2.imread(trainLetterImgPath)
         trainLetterImg = cv2.cvtColor(trainLetterImg, cv2.COLOR_BGR2GRAY)
+        # trainLetterImg = trainLetterImg.reshape(-1, 400).astype(np.float32)
+        print "got ", trainLetterImg.shape
         trainImgs.append(trainLetterImg)
 
     trainData = np.array(trainImgs)
+    print "Train data shape: ", trainData.shape
     trainData = trainData.reshape(-1, 400).astype(np.float32)
+    print "After reshape: ", trainData.shape
+        
     trainLabels = [[48],[49],[50],[51],[52],[53],[54],[55],[56],[57],[65],[66],[67],[68],[69],[70],[71],[72],[73],[74],[75],[76],[77],[78],[79],[80],[81],[82],[83],[84],[85],[86],[87],[88],[89],[90],[97],[98],[99],[100],[101],[102],[103],[104],[105],[106],[107],[108],[109],[110],[111],[112],[113],[114],[115],[116],[117],[118],[119],[120],[121],[122]]
     trainLabels = np.array(trainLabels)
 
@@ -143,10 +157,12 @@ def checkPre(knn, trainSetDir, marksheetImgPath, requiredPre):
             #cv2.waitKey(0)
             #cv2.destroyAllWindows()
             text = text + testLetterImg(knn, letterImg)
-        #cv2.imshow(text,textBlockImg) #todo
-        #cv2.waitKey(0)
-        #cv2.destroyAllWindows()
+        # cv2.imshow(text,textBlockImg) #todo
+        # cv2.waitKey(0)
+        # time.sleep(1)
+        # cv2.destroyAllWindows()
         texts.append(text)
+        print text
     #print texts #todo
     #check if required prerequisites has been found in the mark sheet 
     foundPres = []
@@ -156,8 +172,10 @@ def checkPre(knn, trainSetDir, marksheetImgPath, requiredPre):
     return foundPres
 
 def test():
-    trainSetDir = "D:\\Study\\python\\opencv\\myChainSet\\20x20\\"
-    marksheetImgPath = "D:\\Study\\python\\opencv\\solution1\\img\\transcript_4.png"
+    # trainSetDir = "D:\\Study\\python\\opencv\\myChainSet\\20x20\\"
+    # marksheetImgPath = "D:\\Study\\python\\opencv\\solution1\\img\\transcript_4.png"
+    trainSetDir = "../myChainSet/20x20/"
+    marksheetImgPath = "transcript_4.png"
     trainData, trainLabels = getTrainSet(trainSetDir)
     #the 2 lines below will be put in init function on server
     knn = cv2.ml.KNearest_create()
