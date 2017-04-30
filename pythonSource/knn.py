@@ -103,7 +103,7 @@ def getTrainSet(imgPath):
     #add alphabet[a-zA-Z]
     alphabet = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
     for letter in alphabet:
-        trainLetterImgPath = imgPath + letter + ".png"
+        trainLetterImgPath = imgPath + letter + "transcript_4.png"
         trainLetterImg = cv2.imread(trainLetterImgPath)
         trainLetterImg = cv2.cvtColor(trainLetterImg, cv2.COLOR_BGR2GRAY)
         trainImgs.append(trainLetterImg)
