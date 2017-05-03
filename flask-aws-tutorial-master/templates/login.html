@@ -1,0 +1,66 @@
+{% extends "base.html" %} {% import 'macros.html' as macros %} 
+{% block content %}
+
+<html>
+<!--bootstrap MaxCODN -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet"/>
+
+
+
+<body>
+<div class="col-md-4 col-md-offset-4">
+
+      <div align="center">
+        <h2> Welcome ! login successfully {{studentid}}</h2>
+      </div>
+
+
+<hr>
+
+
+<table  width =200% height = 50% style="margin-left:-120px;margin-top:-60px;" >
+<tr>
+<td>
+<h4>Please upload your transcript</h4>
+<div class="input-group">
+  <span class="input-group-btn">
+    <span class="btn btn-primary" onclick="$(this).parent().find('input[type=file]').click();">Browse</span>
+    <input name="uploaded_file" onchange="$(this).parent().parent().find('.form-control').html($(this).val().split(/[\\|/]/).pop());" style="display: none;" type="file">
+  </span>
+  <span class="form-control"></span>
+</div>
+</td>
+<td width=20%>
+</td>
+<td>
+<div>
+<h4>Choose the course you want to take</h4>
+<div class="dropdown">
+    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Dropdown Example
+    <span class="caret"></span></button>
+    <ul class="dropdown-menu">
+      <li><a href="#">CMPE202</a></li>
+      <li><a href="#">CMPE273</a></li>
+      <li><a href="#">CMPE272</a></li>
+    </ul>
+ </div>
+</div>
+</td>
+</tr>
+</table>
+
+<hr>
+
+<div align="center"
+    <p><a href="/"><button type="submit" class="btn btn-primary">Return home</button></p></a>
+</div>
+
+
+</body>
+</html>
+
+{% endblock %}  
