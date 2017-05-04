@@ -6,7 +6,12 @@ import cv2
 import numpy as np
 import time
 
+debugging = False
+
 def showImg(label, img):
+    global debugging
+    if not debugging:
+        return
     cv2.imshow(label, img)
     cv2.waitKey(500)
     cv2.destroyAllWindows
@@ -45,7 +50,7 @@ def getTextBlocks(file_name ):
     return textRectArr
 
 def getLetterImgsOfOneText(textBlockImg):
-    # showImg("Block", textBlockImg)
+    showImg("Block", textBlockImg)
     im2, contours, hierarchy = cv2.findContours(textBlockImg, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     cnts = sorted([(c, cv2.boundingRect(c)[0]) for c in contours], key=lambda x:x[1])
     arr = []
@@ -68,13 +73,13 @@ def getLetterImgsOfOneText(textBlockImg):
 
     for index, (x, y, w, h) in enumerate(arr):
         letterSrcImg = textBlockImg[y: y + h, x: x + w]
-        # showImg("Letter Before Resize", letterSrcImg)
+        showImg("Letter Before Resize", letterSrcImg)
         
         #if(h < 15 or w < 10 or w > 20):
         #    continue	
         resized_image = cv2.resize(letterSrcImg, (20, 20))
         textLetterImgs.append(resized_image)
-        # showImg("One Letter after resize", resized_image)
+        showImg("One Letter after resize", resized_image)
     return textLetterImgs
 
 def testLetterImg(knn, imgTest):
