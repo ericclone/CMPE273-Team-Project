@@ -1,15 +1,8 @@
-'''
-Simple Flask application to test deployment to Amazon Web Services
-Uses Elastic Beanstalk and RDS
-
-Author: Scott Rodkey - rodkeyscott@gmail.com
-
-Step-by-step tutorial: https://medium.com/@rodkey/deploying-a-flask-application-on-aws-a72daba6bb80
-'''
 
 from flask import Flask, render_template, request
 from application import db
 from application.models import User
+from application.models import Pre_req
 from application.forms import EnterDBInfo, RetrieveDBInfo
 
 # Elastic Beanstalk initalization
@@ -24,6 +17,13 @@ def index():
     form1 = EnterDBInfo(request.form) 
     form2 = RetrieveDBInfo(request.form) 
     
+    try:
+        query_db2 = Pre_req.query.order_by(Pre_req.Pre_id.desc()).limit(10)
+        db.session.close()
+    except:
+        db.session.rollback()
+
+
     if request.method == 'POST' and form1.validate():
         data_entered = User(User_id=form1.dbNotes.data,Name=form1.dbNotes2.data,Type ='Student',Pw =form1.dbNotes3.data,Email = form1.dbNotes4.data)
         
@@ -33,7 +33,8 @@ def index():
             db.session.close()
         except:
             db.session.rollback()
-        return render_template('login.html', studentid=form1.dbNotes.data)
+        
+        return render_template('login.html', studentid=form1.dbNotes.data,courseinfo = query_db2)
         
     if request.method == 'POST' and form2.validate():
         try:   
@@ -41,10 +42,10 @@ def index():
             password = str(form2.pw.data)
             query_db = User.query.filter(User.User_id.in_([userid]),User.Pw.in_([password]))
             result =query_db.first()
+
             if result:
                 print "login successfully"
-                print result
-                return render_template('login.html',studentid =userid)
+                return render_template('login.html',studentid =userid,courseinfo = query_db2)
             else:
                 print "login failed"
                 return render_template('login_failed.html',studentid =userid)
