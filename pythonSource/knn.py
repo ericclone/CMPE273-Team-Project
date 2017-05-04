@@ -44,7 +44,7 @@ def getTextBlocks(file_name ):
         crop_img = new_img[y:y+h, x:x+w]
         ret,crop_img = cv2.threshold(crop_img, 127, 255, cv2.THRESH_BINARY_INV) #reverse color of foreground and background
         textRectArr.append(crop_img)
-        # cv2.imshow('One word',crop_img)  #todo
+        # cv2.imshow('One word',crop_img)  #debug
         # cv2.waitKey(0)
         # cv2.destroyAllWindows()
     return textRectArr
@@ -134,7 +134,7 @@ def getTrainSet(imgPath):
 
     return trainData, trainLabels
 
-def checkPre(knn, trainSetDir, marksheetImgPath, requiredPre):
+def checkPre(knn, trainSetDir, marksheetImgPath):
     textBlockImgs = getTextBlocks(marksheetImgPath)
 
     #generate the text in string according to its image
@@ -158,36 +158,35 @@ def checkPre(knn, trainSetDir, marksheetImgPath, requiredPre):
         letterImgsOfOneText = getLetterImgsOfOneText(textBlockImg)
         #test each letter image and then generate the word in string type 
         for letterImg in letterImgsOfOneText:
-            #cv2.imshow("xxx",letterImg) #todo
+            #cv2.imshow("xxx",letterImg) #debug
             #cv2.waitKey(0)
             #cv2.destroyAllWindows()
             text = text + testLetterImg(knn, letterImg)
-        # cv2.imshow(text,textBlockImg) #todo
+        # cv2.imshow(text,textBlockImg) #debug
         # cv2.waitKey(0)
         # time.sleep(1)
         # cv2.destroyAllWindows()
         texts.append(text)
-        print text
-    #print texts #todo
-    #check if required prerequisites has been found in the mark sheet 
-    foundPres = []
-    for pre in requiredPre:
-       if pre in texts:
-            foundPres.append(pre)
-    return foundPres
+        print text #debug
+    #print texts #debug
+    return texts
 
-def test():
-    # trainSetDir = "D:\\Study\\python\\opencv\\myChainSet\\20x20\\"
-    # marksheetImgPath = "D:\\Study\\python\\opencv\\solution1\\img\\transcript_4.png"
-    trainSetDir = "../myChainSet/20x20/"
-    marksheetImgPath = "transcript_4.png"
+def knnTest(trainSetDir, marksheetImgPath):
+    
     trainData, trainLabels = getTrainSet(trainSetDir)
     #the 2 lines below will be put in init function on server
     knn = cv2.ml.KNearest_create()
     knn.train(trainData, cv2.ml.ROW_SAMPLE, trainLabels)
 
-    requiredPre = ["202", "206", "248"]
-    foundPres = checkPre(knn, trainSetDir, marksheetImgPath, requiredPre)
-    print foundPres
+    takenCourses = checkPre(knn, trainSetDir, marksheetImgPath)
+    return takenCourses
 
-test()
+
+if __name__ == "__main__":
+    # trainSetDir = "D:\\Study\\python\\opencv\\myChainSet\\20x20\\"
+    # marksheetImgPath = "D:\\Study\\python\\opencv\\solution1\\img\\transcript_4.png"
+    trainSetDir = "../myChainSet/20x20/"
+    marksheetImgPath = "transcript_4.png"
+
+    takenCourses = knnTest(trainSetDir, marksheetImgPath)
+    print takenCourses
