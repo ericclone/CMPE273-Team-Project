@@ -93,7 +93,7 @@ def process_upload():
         except:
             db.session.rollback()
 
-        return render_template('login.html', studentid=session_userid)#,courseinfo = query_db2) #TODO 
+        return render_template('login.html', studentid=session_userid,courseinfo = query_db2) 
     #The user are from extension and hasn't log in yet.
     #Save the image in session and go to login
     else:
