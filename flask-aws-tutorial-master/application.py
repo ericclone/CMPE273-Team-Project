@@ -12,6 +12,8 @@ application.debug=True
 application.secret_key = 'cC1YCIWOj9GgWspgNEo2'   
 
 @application.route('/', methods=['GET', 'POST'])
+
+
 @application.route('/index', methods=['GET', 'POST'])
 def index():
     form1 = EnterDBInfo(request.form) 
