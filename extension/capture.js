@@ -30,6 +30,7 @@ function capture_post(url) {
 
             form.method = "POST"
             form.action = url
+            form.target = "_blank"
 
 
             var imagedata = canvas.toDataURL('image/png');

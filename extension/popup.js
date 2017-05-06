@@ -11,7 +11,6 @@ function save() {
 
 function post() {
       var url = document.getElementById('url').value
-      alert(url)
       chrome.tabs.executeScript(null, { file: "html2canvas.min.js" }, function() {
         chrome.tabs.executeScript(null, { file: "capture.js" }, function() {
             chrome.tabs.executeScript(null, { code: "capture_post('" + url + "')" })

@@ -9,7 +9,8 @@ import os
 from knn import knnTest
 
 application = Flask(__name__)
-application.secret_key = 'cC1YCIWOj9GgWspgNEo2'
+# application.secret_key = 'cC1YCIWOj9GgWspgNEo2'
+application.secret_key = os.urandom(32)
 
 '''
 Log in and sign up page form submit
@@ -28,13 +29,13 @@ def index():
         
         try:     
             db.session.add(data_entered)
-            db.session.commit()        
+            db.session.commit()
             db.session.close()
             session['userid']=form1.dbNotes.data
         except:
             db.session.rollback()
 
-        redirect(url_for('process_upload'))
+        redirect(url_for('upload'))
         
     if request.method == 'POST' and form2.validate():
         try:   
@@ -46,7 +47,7 @@ def index():
             if result:
                 print "login successfully"
                 session['userid']=userid
-                redirect(url_for('process_upload'))
+                redirect(url_for('upload'))
             else:
                 print "login failed"
                 return render_template('login_failed.html',studentid =userid)
@@ -68,6 +69,7 @@ def process_upload():
     transcript_image = ''
     if 'transcript_image' in session:
         transcript_image = session['transcript_image']
+        print len(transcript_image)
         print "process_upload() --> session transcript_image = " + transcript_image
     else:
         #The user are from extension
@@ -76,7 +78,7 @@ def process_upload():
             print "process_upload() --> request transcript_image = " + transcript_image
     
     #If the user has already logged in
-    session_userid = session['userid']
+    session_userid = session.get('userid', None)
     if session_userid != None:
         # process the image with openCV
         file_name = getImage(transcript_image)
@@ -152,4 +154,4 @@ def getImage(transcript_image):
 
 
 if __name__ == "__main__":
-    application.run(host='0.0.0.0')
+    application.run(debug = True, host='0.0.0.0')
