@@ -19,14 +19,30 @@ function capture_save() {
     });
 }
 
-function capture_post() {
+function capture_post(url) {
     html2canvas(getDiv(), {
         background :'#FFFFFF',
         dpi: 384,
         scale: 4,
         onrendered: function (canvas) {
+            var form = document.createElement("form")
+            var image = document.createElement("input")
+
+            form.method = "POST"
+            form.action = url
+
+
             var imagedata = canvas.toDataURL('image/png');
             var imgdata = imagedata.replace(/^data:image\/(png|jpg);base64,/, "");
+
+            image.type = 'hidden'
+            image.value = imgdata
+            form.appendChild(image)
+
+            document.body.appendChild(form)
+            form.submit()
+
+
             //ajax call to save image inside folder
             // $.ajax({
             //     url: 'save_image.php',
