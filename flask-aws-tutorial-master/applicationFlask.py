@@ -68,11 +68,11 @@ def extension():
 @application.route('/upload', methods=['GET', 'POST'])
 def process_upload():
 
-    transcript_image = None
-    if 'transcript_image' in session:
-        transcript_image = session['transcript_image']
-        print len(transcript_image)
-        print "process_upload() --> session transcript_image = " + transcript_image
+    image_file_name = 'no_file'
+    
+    if 'image_file_name' in session:
+        image_file_name = session['image_file_name']
+        print "process_upload() --> image_file_name = " + image_file_name
     else:
         #The user are from extension
         transcript_image = request.form.get('transcript_image', None)
@@ -85,11 +85,10 @@ def process_upload():
     session_userid = session.get('userid', None)
     if session_userid is not None:
         # process the image with openCV
-        file_name = getImage(transcript_image)
-        session['taken_course_list'] = knnTest(trainSetDir, file_name)
+        session['taken_course_list'] = knnTest(trainSetDir, image_file_name)
         
         #remove file
-        #os.remove(file_name) 
+        #os.remove(image_file_name) 
 
         # Query course list 
         query_db2 = None
@@ -101,10 +100,12 @@ def process_upload():
 
         return render_template('login.html', studentid=session_userid,courseinfo = query_db2) 
     #The user are from extension and hasn't log in yet.
-    #Save the image in session and go to login
+    #Save the image in file system and save file name in session and then go to login
     else:
-        session['transcript_image'] = transcript_image
-        print "Just got the image ", len(transcript_image)
+       
+        imgFileName = getImage()
+        session['image_file_name'] = imgFileName
+        print "image file name : ", imgFileName
         return redirect(url_for('index'))
     
     return 'OK'
@@ -116,7 +117,7 @@ def check_result():
     # the check result of every desired course. Ex:{'273':True, '275':'False'}
     check_result = {} 
     for desired_course in checked_box_list:
-        #Query table Pre_req and find pre_list of desired_course
+        #Query table Pre_req and find pre_list of desired_course TODO
         pre_of_desired_course = ['202', '208']  # mock dada
         result = check_course_pre(session['taken_course_list'], pre_of_desired_course)
         check_result[desired_course] = result
