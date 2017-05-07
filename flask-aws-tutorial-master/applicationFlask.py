@@ -67,7 +67,7 @@ def extension():
 
 @application.route('/upload', methods=['GET', 'POST'])
 def process_upload():
-
+    transcript_image = None
     image_file_name = 'no_file'
     
     if 'image_file_name' in session:
@@ -103,7 +103,7 @@ def process_upload():
     #Save the image in file system and save file name in session and then go to login
     else:
        
-        imgFileName = getImage()
+        imgFileName = getImage(transcript_image)
         session['image_file_name'] = imgFileName
         print "image file name : ", imgFileName
         return redirect(url_for('index'))
