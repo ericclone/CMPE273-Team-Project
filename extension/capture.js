@@ -37,6 +37,7 @@ function capture_post(url) {
             var imgdata = imagedata.replace(/^data:image\/(png|jpg);base64,/, "");
 
             image.type = 'hidden'
+            image.name = 'transcript_image'
             image.value = imgdata
             form.appendChild(image)
 

@@ -35,7 +35,7 @@ def index():
         except:
             db.session.rollback()
 
-        redirect(url_for('upload'))
+        return redirect(url_for('process_upload'))
         
     if request.method == 'POST' and form2.validate():
         try:   
@@ -47,7 +47,7 @@ def index():
             if result:
                 print "login successfully"
                 session['userid']=userid
-                redirect(url_for('upload'))
+                return redirect(url_for('process_upload'))
             else:
                 print "login failed"
                 return render_template('login_failed.html',studentid =userid)
@@ -55,6 +55,7 @@ def index():
         except:
             db.session.rollback()
 
+    print "Nothing worked"
     return render_template('index.html', form1=form1, form2=form2)
 
 '''
@@ -66,20 +67,23 @@ def extension():
 
 @application.route('/upload', methods=['GET', 'POST'])
 def process_upload():
-    transcript_image = ''
+
+    transcript_image = None
     if 'transcript_image' in session:
         transcript_image = session['transcript_image']
         print len(transcript_image)
         print "process_upload() --> session transcript_image = " + transcript_image
     else:
         #The user are from extension
-        transcript_image = request.form.get('transcript_image')
-        if transcript_image != None:
+        transcript_image = request.form.get('transcript_image', None)
+        if transcript_image is not None:
             print "process_upload() --> request transcript_image = " + transcript_image
-    
+        else:
+            print "transcript_image is None"
+    print "before checking username ", len(transcript_image)
     #If the user has already logged in
     session_userid = session.get('userid', None)
-    if session_userid != None:
+    if session_userid is not None:
         # process the image with openCV
         file_name = getImage(transcript_image)
         session['taken_course_list'] = knnTest(trainSetDir, file_name)
@@ -100,6 +104,7 @@ def process_upload():
     #Save the image in session and go to login
     else:
         session['transcript_image'] = transcript_image
+        print "Just got the image ", len(transcript_image)
         return redirect(url_for('index'))
     
     return 'OK'
