@@ -8,6 +8,7 @@ import time
 import os
 from knn import knnTest
 from flask_mail import Mail,  Message
+from flask_mysqldb import MySQL
 
 application = Flask(__name__)
 # application.secret_key = 'cC1YCIWOj9GgWspgNEo2'
@@ -18,9 +19,14 @@ application.config.update(
     MAIL_PORT = 465,
     MAIL_USE_SSL = True,
     MAIL_USERNAME = 'sjsu.cmpe273.test@gmail.com',
-    MAIL_PASSWORD = 'sjsu1234'
+    MAIL_PASSWORD = 'sjsu1234',
+    MYSQL_USER = 'flask',
+    MYSQL_PASSWORD = '12345678',
+    MYSQL_DB = 'flaskdb',
+    MYSQL_HOST = 'flasktest.cmjjsvadtatr.us-west-2.rds.amazonaws.com'
 )
 mail = Mail(application)
+mysql = MySQL(application)
 
 '''
 Log in and sign up page form submit
@@ -149,6 +155,13 @@ def send_mail():
     )
     return email
 
+@application.route("/confirmation", methods=['GET', 'POST'])
+def confirmation():
+    #return render_template("confirmation.html")
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * from flaskdb.Pre_student")
+    data = cursor.fetchall()
+    return str(data)
 
 def check_course_pre(taken_course_list, pre_list):
     pre_amout = sizeof(pre_list)
