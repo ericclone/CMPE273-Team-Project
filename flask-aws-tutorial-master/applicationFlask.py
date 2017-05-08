@@ -130,23 +130,37 @@ def process_upload():
     
     return 'OK'
 
-@application.route('/check')
+@application.route('/check', methods=['GET', 'POST'])
 def check_result():
     #Get checked_box_list(ex: 273, 275), the courses the student wants to take 
-    checked_box_list = ['273', '275'] # mock data
+    if request.method =='POST':
+        course_check == request.form['result'];
+    checked_box_list = course_check.split(",");
+
+    # checked_box_list = ['273', '275'] # mock data
     # the check result of every desired course. Ex:{'273':True, '275':'False'}
     check_result = {} 
     for desired_course in checked_box_list:
-        #Query table Pre_req and find pre_list of desired_course TODO
-        pre_of_desired_course = ['202', '208']  # mock dada
-        result = check_course_pre(session['taken_course_list'], pre_of_desired_course)
+        #Query table Pre_req and find pre_list of desired_course
+        result = check_course_pre(session['taken_course_list'], desired_course)
+        course_enter = Pre_student(User_id=session_userid,Course =desired_course,Status=result)
+          
+        try:     
+           db.session.add(course_enter)
+           db.session.commit()        
+           db.session.close()
+        except:
+           db.session.rollback()
+
+    
         check_result[desired_course] = result
     
-    #Save result into DB    TODO
+   
+    return render_template('confirmation.html', course_result = check_result)
 
-    #Send mail    TODO
 
-    return "page" #TODO
+
+
 
 @application.route("/send_mail", methods=['GET', 'POST'])
 def send_mail():
