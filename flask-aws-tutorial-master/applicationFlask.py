@@ -7,12 +7,28 @@ import base64
 import time
 import os
 from knn import knnTest
+from flask_mail import Mail,  Message
+from flask_mysqldb import MySQL
 
 import traceback
 
 application = Flask(__name__)
 # application.secret_key = 'cC1YCIWOj9GgWspgNEo2'
 application.secret_key = os.urandom(32)
+
+application.config.update(
+    MAIL_SERVER = 'smtp.gmail.com',
+    MAIL_PORT = 465,
+    MAIL_USE_SSL = True,
+    MAIL_USERNAME = 'sjsu.cmpe273.test@gmail.com',
+    MAIL_PASSWORD = 'sjsu1234',
+    MYSQL_USER = 'flask',
+    MYSQL_PASSWORD = '12345678',
+    MYSQL_DB = 'flaskdb',
+    MYSQL_HOST = 'flasktest.cmjjsvadtatr.us-west-2.rds.amazonaws.com'
+)
+mail = Mail(application)
+mysql = MySQL(application)
 
 '''
 Log in and sign up page form submit
@@ -132,6 +148,24 @@ def check_result():
 
     return "page" #TODO
 
+@application.route("/send_mail", methods=['GET', 'POST'])
+def send_mail():
+    email = "hq1992518@gmail.com"
+    msg = mail.send_message(
+        'Hello',
+        sender='sjsu.cmpe273.test@gmail.com',
+        recipients=[email],
+        body="Testing"
+    )
+    return email
+
+@application.route("/confirmation", methods=['GET', 'POST'])
+def confirmation():
+    #return render_template("confirmation.html")
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * from flaskdb.Pre_student")
+    data = cursor.fetchall()
+    return str(data)
 
 def check_course_pre(taken_course_list, pre_list):
     pre_amout = sizeof(pre_list)
