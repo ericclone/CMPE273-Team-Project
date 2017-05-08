@@ -40,3 +40,25 @@ class Pre_req(db.Model):
     def __repr__(self):
 
         return '<Pre_req %r>' % self.Course
+    
+class Pre_student(db.Model):
+    # id = db.Column(db.Integer, primary_key=True)
+    # notes = db.Column(db.String(128), index=True, unique=False)
+    __tablename__ = 'Pre_student'
+    
+    Pres_id = db.Column(db.Integer, primary_key=True)
+    User_id = db.Column(db.String(128), index=True, unique=False)
+    Course = db.Column(db.String(128), index=True, unique=False)
+    Status = db.Column(db.String(128), index=True, unique=False)
+    
+    def __init__(self, Pres_id,User_id,Course,Status):
+        self.Pres_id = Pres_id
+        self.User_id = User_id
+        self.Course = Course
+        self.Status = Status
+       
+
+    def __repr__(self):
+
+        return '<Pre_student %r>' % self.Status
+
