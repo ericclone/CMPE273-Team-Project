@@ -8,6 +8,8 @@ import time
 import os
 from knn import knnTest
 
+import traceback
+
 application = Flask(__name__)
 # application.secret_key = 'cC1YCIWOj9GgWspgNEo2'
 application.secret_key = os.urandom(32)
@@ -77,18 +79,20 @@ def process_upload():
         #The user are from extension
         transcript_image = request.form.get('transcript_image', None)
         if transcript_image is not None:
-            print "process_upload() --> request transcript_image = " + transcript_image
+            print "process_upload() --> request transcript_image = "# + transcript_image
         else:
             print "transcript_image is None"
-    print "before checking username ", len(transcript_image)
+    # print "before checking username ", len(transcript_image)
     #If the user has already logged in
     session_userid = session.get('userid', None)
     if session_userid is not None:
         # process the image with openCV
+        trainSetDir = trainSetDir = "../myChainSet/20x20/"
         session['taken_course_list'] = knnTest(trainSetDir, image_file_name)
+        print session['taken_course_list']
         
-        #remove file
-        #os.remove(image_file_name) 
+        # remove file
+        # os.remove(image_file_name) 
 
         # Query course list 
         query_db2 = None
@@ -145,17 +149,18 @@ def getImage(transcript_image):
     transcript_image = transcript_image.replace('data:image/png;base64,', '')
     transcript_image = transcript_image.replace(' ', '+')
     image = transcript_image.decode('base64')
-    print "#########: "+image
+    # print "#########: " + image
     millis = str(int(round(time.time() * 1000)))
-    file_name = 'C:/test' + millis + '.png' #TODO use linux path
+    file_name = 'temp/' + millis + '.png' #TODO use linux path
     f = None
     try:
         f = open(file_name, 'wb')
-        f.write(image)
+        print "Saving file ", file_name, f.write(image)
         f.close()
-    except:
+    except Exception as e:
         if f != None:
             f.close()
+        traceback.print_exc()
     return file_name
 
 

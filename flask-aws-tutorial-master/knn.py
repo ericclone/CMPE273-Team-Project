@@ -31,6 +31,23 @@ def getTextBlocks(file_name ):
 
     img2, contours, hierarchy = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) # get contours
     
+    heights = []
+    for contour in contours:
+        x, y, w, h = cv2.boundingRect(contour)
+        heights.append(h)
+    
+    maxHeight = max(heights)
+    scale = 73.0 / maxHeight
+
+    w, h = new_img.shape
+    # print maxHeight, w, h
+
+    new_img = cv2.resize(new_img, (int(h * scale), int(w * scale)))
+    kernel = cv2.getStructuringElement(cv2.MORPH_CROSS,(8 , 3)) # to manipulate the orientation of dilution , large x means horizonatally dilating  more, large y means vertically dilating more 
+    dilated = cv2.dilate(new_img,kernel,iterations = 5) # dilate , more the iteration more the dilation
+
+    img2, contours, hierarchy = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) # get contours
+
     textRectArr = []
 	
     for contour in contours:
@@ -44,9 +61,7 @@ def getTextBlocks(file_name ):
         crop_img = new_img[y:y+h, x:x+w]
         ret,crop_img = cv2.threshold(crop_img, 127, 255, cv2.THRESH_BINARY_INV) #reverse color of foreground and background
         textRectArr.append(crop_img)
-        # cv2.imshow('One word',crop_img)  #debug
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
+        showImg("One word", crop_img)
     return textRectArr
 
 def getLetterImgsOfOneText(textBlockImg):
@@ -62,7 +77,7 @@ def getLetterImgsOfOneText(textBlockImg):
             if abs(cnts[index][1] - arr[i][0]) <= 3:
                 add = False
                 break
-        if w < 25:
+        if w < 20:
             add = False
         if w > 50:
             add = False
@@ -117,17 +132,17 @@ def getTrainSet(imgPath):
         if letter >= "A" and letter <= "Z":
             letter = letter + "_"
         trainLetterImgPath = imgPath + letter + ".png"
-        print "reading ", trainLetterImgPath
+        # print "reading ", trainLetterImgPath
         trainLetterImg = cv2.imread(trainLetterImgPath)
         trainLetterImg = cv2.cvtColor(trainLetterImg, cv2.COLOR_BGR2GRAY)
         # trainLetterImg = trainLetterImg.reshape(-1, 400).astype(np.float32)
-        print "got ", trainLetterImg.shape
+        # print "got ", trainLetterImg.shape
         trainImgs.append(trainLetterImg)
 
     trainData = np.array(trainImgs)
-    print "Train data shape: ", trainData.shape
+    # print "Train data shape: ", trainData.shape
     trainData = trainData.reshape(-1, 400).astype(np.float32)
-    print "After reshape: ", trainData.shape
+    # print "After reshape: ", trainData.shape
         
     trainLabels = [[48],[49],[50],[51],[52],[53],[54],[55],[56],[57],[65],[66],[67],[68],[69],[70],[71],[72],[73],[74],[75],[76],[77],[78],[79],[80],[81],[82],[83],[84],[85],[86],[87],[88],[89],[90],[97],[98],[99],[100],[101],[102],[103],[104],[105],[106],[107],[108],[109],[110],[111],[112],[113],[114],[115],[116],[117],[118],[119],[120],[121],[122]]
     trainLabels = np.array(trainLabels)
@@ -167,7 +182,7 @@ def checkPre(knn, trainSetDir, marksheetImgPath):
         # time.sleep(1)
         # cv2.destroyAllWindows()
         texts.append(text)
-        print text #debug
+        # print text #debug
     #print texts #debug
     return texts
 
@@ -179,7 +194,12 @@ def knnTest(trainSetDir, marksheetImgPath):
     knn.train(trainData, cv2.ml.ROW_SAMPLE, trainLabels)
 
     takenCourses = checkPre(knn, trainSetDir, marksheetImgPath)
-    return takenCourses
+    finalList = []
+    for i in range(len(takenCourses) - 1):
+        if takenCourses[i + 1][:3].upper() == 'CMP':
+            finalList.append(takenCourses[i])
+    # return takenCourses
+    return finalList
 
 
 if __name__ == "__main__":
