@@ -5,6 +5,7 @@
 import cv2
 import numpy as np
 import time
+import string
 
 debugging = False
 
@@ -105,9 +106,23 @@ def testLetterImg(knn, imgTest):
     ret,result,neighbours,dist = knn.findNearest(testData,k=1)
     return chr(int(ret))
 
-def getTrainSet(imgPath):
+def loadImages(imgPath, nameList):
+    trainImgs = []
+    for i in nameList:
+        label = str(i)
+        if label >= 'A' and label <= 'Z':
+            label += '_'
+        trainDigitImgPath = imgPath + label + ".png"
+        trainDigitImg = cv2.imread(trainDigitImgPath)
+        trainDigitImg = cv2.cvtColor(trainDigitImg, cv2.COLOR_BGR2GRAY)
+        # trainDigitImg = trainDigitImg.reshape(-1, 400).astype(np.float32)
+        trainImgs.append(trainDigitImg)
+    return trainImgs
+
+def getTrainSet(imgRoot):
 
     trainImgs = []
+    trainLabels = []
     #according to the sequence of ASCII
     #add "/"
     #trainLetterImgPath = imgPath + "slash.png"
@@ -115,41 +130,38 @@ def getTrainSet(imgPath):
     #trainLetterImg = cv2.cvtColor(trainLetterImg, cv2.COLOR_BGR2GRAY)
     #trainImgs.append(trainLetterImg)
     #add 0-9
-    for i in range(10):
-        trainDigitImgPath = imgPath + str(i) + ".png"
-        trainDigitImg = cv2.imread(trainDigitImgPath)
-        trainDigitImg = cv2.cvtColor(trainDigitImg, cv2.COLOR_BGR2GRAY)
-        # trainDigitImg = trainDigitImg.reshape(-1, 400).astype(np.float32)
-        trainImgs.append(trainDigitImg)
-    #add ":"
-    #trainLetterImgPath = imgPath + "colon.png"
-    #trainLetterImg = cv2.imread(trainLetterImgPath)
-    #trainLetterImg = cv2.cvtColor(trainLetterImg, cv2.COLOR_BGR2GRAY)
-    #trainImgs.append(trainLetterImg)
-    #add alphabet[a-zA-Z]
-    alphabet = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
-    for letter in alphabet:
-        if letter >= "A" and letter <= "Z":
-            letter = letter + "_"
-        trainLetterImgPath = imgPath + letter + ".png"
-        # print "reading ", trainLetterImgPath
-        trainLetterImg = cv2.imread(trainLetterImgPath)
-        trainLetterImg = cv2.cvtColor(trainLetterImg, cv2.COLOR_BGR2GRAY)
-        # trainLetterImg = trainLetterImg.reshape(-1, 400).astype(np.float32)
-        # print "got ", trainLetterImg.shape
-        trainImgs.append(trainLetterImg)
+    numbers = [[48],[49],[50],[51],[52],[53],[54],[55],[56],[57]]
+    upper = [[65],[66],[67],[68],[69],[70],[71],[72],[73],[74],[75],[76],[77],[78],[79],[80],[81],[82],[83],[84],[85],[86],[87],[88],[89],[90]]
+    lower = [[97],[98],[99],[100],[101],[102],[103],[104],[105],[106],[107],[108],[109],[110],[111],[112],[113],[114],[115],[116],[117],[118],[119],[120],[121],[122]]
+
+    imgPath = imgRoot + "/20x20/"
+    trainImgs.extend(loadImages(imgPath, range(10)))
+    trainLabels.extend(numbers)
+    trainImgs.extend(loadImages(imgPath, string.uppercase))
+    trainLabels.extend(upper)
+    trainImgs.extend(loadImages(imgPath, string.lowercase))
+    trainLabels.extend(lower)
+
+    imgPath = imgRoot + "/Arial/"
+    trainImgs.extend(loadImages(imgPath, range(10)))
+    trainLabels.extend(numbers)
+    trainImgs.extend(loadImages(imgPath, string.uppercase))
+    trainLabels.extend(upper)
 
     trainData = np.array(trainImgs)
-    # print "Train data shape: ", trainData.shape
+    print "Train data shape: ", trainData.shape
     trainData = trainData.reshape(-1, 400).astype(np.float32)
-    # print "After reshape: ", trainData.shape
-        
-    trainLabels = [[48],[49],[50],[51],[52],[53],[54],[55],[56],[57],[65],[66],[67],[68],[69],[70],[71],[72],[73],[74],[75],[76],[77],[78],[79],[80],[81],[82],[83],[84],[85],[86],[87],[88],[89],[90],[97],[98],[99],[100],[101],[102],[103],[104],[105],[106],[107],[108],[109],[110],[111],[112],[113],[114],[115],[116],[117],[118],[119],[120],[121],[122]]
+    print "After reshape: ", trainData.shape
+    print "size of train labels ", len(trainLabels) 
     trainLabels = np.array(trainLabels)
+
+
+
 
     return trainData, trainLabels
 
 def checkPre(knn, trainSetDir, marksheetImgPath):
+    global debugging
     textBlockImgs = getTextBlocks(marksheetImgPath)
 
     #generate the text in string according to its image
@@ -182,23 +194,27 @@ def checkPre(knn, trainSetDir, marksheetImgPath):
         # time.sleep(1)
         # cv2.destroyAllWindows()
         texts.append(text)
-        # print text #debug
+        if True or debugging:
+            print text #debug
     #print texts #debug
     return texts
 
-def knnTest(trainSetDir, marksheetImgPath):
+def knnTest(trainSetDir, marksheetImgPath, courseList):
     
     trainData, trainLabels = getTrainSet(trainSetDir)
     #the 2 lines below will be put in init function on server
     knn = cv2.ml.KNearest_create()
     knn.train(trainData, cv2.ml.ROW_SAMPLE, trainLabels)
 
-    takenCourses = checkPre(knn, trainSetDir, marksheetImgPath)
+    texts = checkPre(knn, trainSetDir, marksheetImgPath)
     finalList = []
-    for i in range(len(takenCourses) - 1):
-        if takenCourses[i + 1][:3].upper() == 'CMP':
-            finalList.append(takenCourses[i])
-    # return takenCourses
+    for text in texts:
+        if text in courseList:
+            finalList.append(text)
+        else:
+            text = text.replace('O', '0')
+            if text in courseList:
+                finalList.append(text)
     return finalList
 
 

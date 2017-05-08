@@ -102,8 +102,9 @@ def process_upload():
     session_userid = session.get('userid', None)
     if session_userid is not None:
         # process the image with openCV
-        trainSetDir = trainSetDir = "../myChainSet/20x20/"
-        session['taken_course_list'] = knnTest(trainSetDir, image_file_name)
+        trainSetDir = trainSetDir = "../myChainSet"
+        courseList = ['202', '275', '138', '226']
+        session['taken_course_list'] = knnTest(trainSetDir, image_file_name, courseList)
         print session['taken_course_list']
         
         # remove file
