@@ -38,8 +38,8 @@ If sign up, insert user into DB.
 @application.route('/index', methods=['GET', 'POST'])
 def index():
     
-    form1 = EnterDBInfo(request.form) 
-    form2 = RetrieveDBInfo(request.form) 
+    form1 = EnterDBInfo(request.form)
+    form2 = RetrieveDBInfo(request.form)
 
     if request.method == 'POST' and form1.validate():
         data_entered = User(User_id=form1.dbNotes.data,Name=form1.dbNotes2.data,Type ='Student',Pw =form1.dbNotes3.data,Email = form1.dbNotes4.data)
@@ -82,6 +82,14 @@ mock image for test
 def extension():
     return render_template('extension.html')
 
+def getCourseList():
+    result = db.engine.execute('SELECT Pre_course FROM Pre_req')
+    result_list = []
+    for row in result:
+        if row['Pre_course'] != 'None':
+            result_list.append(row['Pre_course'])
+    return set(result_list)
+
 @application.route('/upload', methods=['GET', 'POST'])
 def process_upload():
     transcript_image = None
@@ -103,7 +111,7 @@ def process_upload():
     if session_userid is not None:
         # process the image with openCV
         trainSetDir = trainSetDir = "../myChainSet"
-        courseList = ['202', '275', '138', '226']
+        courseList = getCourseList()
         session['taken_course_list'] = knnTest(trainSetDir, image_file_name, courseList)
         print session['taken_course_list']
         
