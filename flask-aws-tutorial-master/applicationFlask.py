@@ -161,11 +161,13 @@ def send_mail():
 
 @application.route("/confirmation", methods=['GET', 'POST'])
 def confirmation():
-    #return render_template("confirmation.html")
+    
     cursor = mysql.connection.cursor()
     cursor.execute("SELECT * from flaskdb.Pre_student")
     data = cursor.fetchall()
-    return str(data)
+    #return str(data)
+    test = "CMPE273"
+    return render_template('confirmation.html', test = test)    
 
 def check_course_pre(taken_course_list, pre_list):
     pre_amout = sizeof(pre_list)
