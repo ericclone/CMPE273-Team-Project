@@ -28,7 +28,7 @@ application.config.update(
     MYSQL_HOST = 'flasktest.cmjjsvadtatr.us-west-2.rds.amazonaws.com'
 )
 mail = Mail(application)
-mysql = MySQL(application)
+# mysql = MySQL(application)
 
 '''
 Log in and sign up page form submit
@@ -161,12 +161,12 @@ def send_mail():
 
 @application.route("/confirmation", methods=['GET', 'POST'])
 def confirmation():
-'''    
+    '''
     cursor = mysql.connection.cursor()
     cursor.execute("SELECT * from flaskdb.Pre_student")
     data = cursor.fetchall()
     #return str(data)
-'''
+    '''
     test = "CMPE273"
     return render_template('confirmation.html', test = test)    
 
