@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 from application import db
-from application.models import User
-from application.models import Pre_req
+from application.models import *
 from application.forms import EnterDBInfo, RetrieveDBInfo
 import base64
 import time
@@ -134,7 +133,7 @@ def process_upload():
 def check_result():
     #Get checked_box_list(ex: 273, 275), the courses the student wants to take 
     if request.method =='POST':
-        course_check == request.form['result'];
+        course_check = request.form['result'];
     checked_box_list = course_check.split(",");
 
     # checked_box_list = ['273', '275'] # mock data
@@ -143,7 +142,7 @@ def check_result():
     for desired_course in checked_box_list:
         #Query table Pre_req and find pre_list of desired_course
         result = check_course_pre(session['taken_course_list'], desired_course)
-        course_enter = Pre_student(User_id=session_userid,Course =desired_course,Status=result)
+        course_enter = Pre_student(User_id=session['userid'],Course =desired_course,Status=result)
           
         try:     
            db.session.add(course_enter)
@@ -185,7 +184,7 @@ def confirmation():
     return render_template('confirmation.html', test = test)    
 
 def check_course_pre(taken_course_list, pre_list):
-    pre_amout = sizeof(pre_list)
+    pre_amout = len(pre_list)
     count = 0
     for pre in pre_list:
         if pre in taken_course_list:
