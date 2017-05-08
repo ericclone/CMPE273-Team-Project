@@ -8,7 +8,7 @@ import time
 import os
 from knn import knnTest
 from flask_mail import Mail,  Message
-from flask_mysqldb import MySQL
+#from flask_mysqldb import MySQL
 
 import traceback
 
@@ -161,11 +161,12 @@ def send_mail():
 
 @application.route("/confirmation", methods=['GET', 'POST'])
 def confirmation():
-    
+'''    
     cursor = mysql.connection.cursor()
     cursor.execute("SELECT * from flaskdb.Pre_student")
     data = cursor.fetchall()
     #return str(data)
+'''
     test = "CMPE273"
     return render_template('confirmation.html', test = test)    
 
