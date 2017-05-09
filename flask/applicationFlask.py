@@ -158,6 +158,8 @@ def check_result():
         course_check = request.form['result'];
     checked_box_list = course_check.split(",");
 
+    userid = session['userid']
+    db.engine.execute('DELETE FROM Pre_student WHERE User_id = %s' % userid)
     # checked_box_list = ['273', '275'] # mock data
     # the check result of every desired course. Ex:{'273':True, '275':'False'}
     check_result = {} 
