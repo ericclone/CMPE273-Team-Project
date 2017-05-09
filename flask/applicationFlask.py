@@ -145,9 +145,9 @@ def process_upload():
         for row in query_db2:
             course = row.Course
             if course in checked:
-                courselist.append({Course: course, Checked: True})
+                courselist.append({'Course': course, 'Checked': True})
             else:
-                courselist.append({Course: course, Checked: False})
+                courselist.append({'Course': course, 'Checked': False})
 
         return render_template('login.html', studentid=session_userid, courseinfo = courselist)
 
@@ -191,16 +191,24 @@ def check_result():
         check_result[desired_course] = result
     
    
-    return render_template('confirmation.html', course_result = check_result)
+    try:
+        email_list = User.query.filter_by(User_id=session['userid'])
+        db.session.close()
+    except:
+        db.session.rollback()
+
+    email = email_list.first().Email
+
+    send_mail(email, "Your pre-requisite result", str(check_result))
+    return render_template('confirmation.html', course_result = check_result, email = email)
 
 @application.route("/send_mail", methods=['GET', 'POST'])
-def send_mail():
-    email = "hq1992518@gmail.com"
+def send_mail(email='hq1992518@gmail.com', subject='Testing', context='hahahahahaha'):
     msg = mail.send_message(
-        'Hello',
+        subject,
         sender='sjsu.cmpe273.test@gmail.com',
         recipients=[email],
-        body="Testing"
+        body=context
     )
     return email
 

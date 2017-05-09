@@ -37,8 +37,24 @@
 
           <div class="inner cover">
             <h2 class="cover-heading">Pre-requistie check result</h2>
-            <p class="lead">Do you want to receive a confirmation email for this result? <br> Please enter your email and click send</p>
-            <p> {{test}} </p>
+            <center>
+            <table style="margin: 10px">
+            <tr>
+            <td style="padding: 10px; text-align: center">Class</td>
+            <td style="padding: 10px; text-align: center">Pre-requisite Satisfied</td>
+            
+            <th>
+            </tr>
+            {% for name, result in course_result.iteritems() %}
+            <tr>
+            <td style="padding: 10px; text-align: center">CMPE {{name}}</td>
+            <td style="padding: 10px; text-align: center">{{result}}</td>
+            </tr>
+            {% endfor %}
+            </table>
+            </center>
+            <p class="lead">A confirmation email has been sent to your email address: <br /> {{email}}</p>
+            
 
           </div>
 

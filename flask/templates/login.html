@@ -10,12 +10,9 @@
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet"/>
 <script>
 function dodata(){
-       var result = $("input[name=xxx]:checked").map(function () {return this.value;}).get().join(",");
+    var result = $("input[name=xxx]:checked").map(function () {return this.value;}).get().join(",");
      
-     $("#result").val(result);
- 
-     alert($("#result").val());
-
+    $("#result").val(result);
    }
 
 </script>
@@ -30,21 +27,6 @@ function dodata(){
 <hr>
 
 
-<table  width =200% height = 50% style="margin-left:-120px;margin-top:-60px;" >
-<tr>
-<td align="margin-top">
-<h4>Please upload your transcript</h4>
-<div class="input-group">
-  <span class="input-group-btn">
-    <span class="btn btn-primary" onclick="$(this).parent().find('input[type=file]').click();">Browse</span>
-    <input name="uploaded_file" onchange="$(this).parent().parent().find('.form-control').html($(this).val().split(/[\\|/]/).pop());" style="display: none;" type="file">
-  </span>
-  <span class="form-control"></span>
-</div>
-</td>
-<td width=20%>
-</td>
-<td>
 <div class="checkbox">
 <table>
 <h4>Choose the course you want to take</h4>
@@ -67,9 +49,6 @@ CMPE:<br />
 
 </div>
 
-</td>
-</tr>
-</table>
 
 <div align="center">
    <p><input type="submit" onclick ="dodata()" class="btn btn-primary" style="background-color:green;font-size:30px;"></button></p>
