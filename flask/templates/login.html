@@ -50,11 +50,16 @@ function dodata(){
 <h4>Choose the course you want to take</h4>
 CMPE:<br />
 {% for z in courseinfo %}
-<tr>
-<td>
-<label><input type="checkbox" value="{{z.Course}}" name ="xxx">{{z.Course}}</label>
-</td></tr>
-
+  {% for previous inprevious_list%}
+    <tr>
+      <td>
+        <label><input type="checkbox" value="{{z.Course}}" name ="xxx"
+		{% if previous.Course==z.Course %}
+		  checked
+		{% endif %}
+		>{{z.Course}}</label>
+      </td></tr>
+  {% endfor %}
 {% endfor %}
 </table>
 

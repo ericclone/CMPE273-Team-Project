@@ -129,6 +129,16 @@ def process_upload():
         except:
             db.session.rollback()
 
+        # Query previous list already in DB
+        query_previous_list = None
+        try:
+            query_previous_list = Pre_student.query.filter_by(User_id=session['userid'])
+            db.session.close()
+        except:
+            db.session.rollback()
+
+        return render_template('login.html', studentid=session_userid, previous_list = query_previous_list)
+
         return render_template('login.html', studentid=session_userid,courseinfo = query_db2) 
     #The user are from extension and hasn't log in yet.
     #Save the image in file system and save file name in session and then go to login
