@@ -136,10 +136,22 @@ def process_upload():
             db.session.close()
         except:
             db.session.rollback()
+        
+        checked = []
+        for row in query_previous_list:
+            checked.append(row.Course)
+        
+        courselist = []
+        for row in query_db2:
+            course = row.Course
+            if course in checked:
+                courselist.append({Course: course, Checked: True})
+            else:
+                courselist.append({Course: course, Checked: False})
 
-        return render_template('login.html', studentid=session_userid, previous_list = query_previous_list)
+        return render_template('login.html', studentid=session_userid, courseinfo = courselist)
 
-        return render_template('login.html', studentid=session_userid,courseinfo = query_db2) 
+        # return render_template('login.html', studentid=session_userid,courseinfo = query_db2) 
     #The user are from extension and hasn't log in yet.
     #Save the image in file system and save file name in session and then go to login
     else:
