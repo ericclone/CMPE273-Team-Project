@@ -78,7 +78,7 @@ def index():
 '''
 mock image for test
 '''
-@application.route('/upload')
+@application.route('/uploadtest')
 def extension():
     return render_template('upload.html')
 
