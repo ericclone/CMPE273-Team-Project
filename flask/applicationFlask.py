@@ -82,8 +82,11 @@ mock image for test
 def extension():
     return render_template('extension.html')
 
-def getCourseList():
-    result = db.engine.execute('SELECT Pre_course FROM Pre_req')
+def getPrereq(desired_course):
+    statement = 'SELECT Pre_course FROM Pre_req WHERE Course = %s' % desired_course
+    if desired_course is None:
+        statement = 'SELECT Pre_course FROM Pre_req'
+    result = db.engine.execute(statement)
     result_list = []
     for row in result:
         if row['Pre_course'] != 'None':
@@ -111,7 +114,7 @@ def process_upload():
     if session_userid is not None:
         # process the image with openCV
         trainSetDir = trainSetDir = "../myChainSet"
-        courseList = getCourseList()
+        courseList = getPrereq(None)
         session['taken_course_list'] = knnTest(trainSetDir, image_file_name, courseList)
         print session['taken_course_list']
         
@@ -121,7 +124,7 @@ def process_upload():
         # Query course list 
         query_db2 = None
         try:
-            query_db2 = Pre_req.query.order_by(Pre_req.Pre_id.desc()).limit(10)
+            query_db2 = Pre_req.query.order_by(Pre_req.Pre_id.desc())
             db.session.close()
         except:
             db.session.rollback()
@@ -166,10 +169,6 @@ def check_result():
    
     return render_template('confirmation.html', course_result = check_result)
 
-
-
-
-
 @application.route("/send_mail", methods=['GET', 'POST'])
 def send_mail():
     email = "hq1992518@gmail.com"
@@ -192,17 +191,12 @@ def confirmation():
     test = "CMPE273"
     return render_template('confirmation.html', test = test)    
 
-def check_course_pre(taken_course_list, pre_list):
-    pre_amout = len(pre_list)
-    count = 0
-    for pre in pre_list:
-        if pre in taken_course_list:
-            count += 1
-    #the student has taken all the pre of this course
-    if count == pre_amout:
-        return True
-    else:
-        return False
+def check_course_pre(taken_course_list, desired_course):
+    pre_set = getPrereq(desired_course)
+    for pre in pre_set:
+        if pre not in taken_course_list:
+            return 'n'
+    return 'y'
         
 def getImage(transcript_image):
     transcript_image = transcript_image.replace('data:image/png;base64,', '')

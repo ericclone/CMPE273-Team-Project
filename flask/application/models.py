@@ -51,8 +51,7 @@ class Pre_student(db.Model):
     Course = db.Column(db.String(128), index=True, unique=False)
     Status = db.Column(db.String(128), index=True, unique=False)
     
-    def __init__(self, Pres_id,User_id,Course,Status):
-        self.Pres_id = Pres_id
+    def __init__(self, User_id,Course,Status):
         self.User_id = User_id
         self.Course = Course
         self.Status = Status
