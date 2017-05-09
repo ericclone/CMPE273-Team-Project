@@ -78,9 +78,9 @@ def index():
 '''
 mock image for test
 '''
-@application.route('/extension')
+@application.route('/upload')
 def extension():
-    return render_template('extension.html')
+    return render_template('upload.html')
 
 def getPrereq(desired_course):
     statement = 'SELECT Pre_course FROM Pre_req WHERE Course = %s' % desired_course
