@@ -30,4 +30,4 @@ def logged_in():
 
 
 ```
-~~AWS EC2 ip: ec2-54-183-11-0.us-west-1.compute.amazonaws.com ~~ (No more credit)
+~~AWS EC2 ip: ec2-54-183-11-0.us-west-1.compute.amazonaws.com~~ (ran out of credit)
